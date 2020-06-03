@@ -9,26 +9,30 @@ import org.junit.jupiter.api.Test;
 
 import lombok.SneakyThrows;
 
-class ExecutorTest extends Executor{
+public class MethodTest extends Executor {
 	
 	private StandardInputSnatcher in = new StandardInputSnatcher();
 	public ExecutorService ex = Executors.newFixedThreadPool(5);
 	
 	@Test @SneakyThrows
-	void timeExecutorTest() {
+	void exitLineTest() {
 		System.setIn(in);
-		ex.submit(() -> {
-			try {
-				main(new String[0]);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
-		Thread.sleep(1 * 15000);
+		ex.submit(Executor::writeLog);
+		in.inputln("foot");
 		in.inputln("exit");
-		
-		Thread.sleep(1 * 5000);
+		Executor.exitLine(ex);
 	}
+	
+	@Test @SneakyThrows
+	void writeLogTest() {
+		Thread.sleep(5 * 1000);
+		ex.submit(Executor::writeLog);
+		Thread.sleep(11 * 1000);
+		ex.shutdown();
+		
+	}
+	
+
 	
 	
 	public static class StandardInputSnatcher extends InputStream {
@@ -51,3 +55,4 @@ class ExecutorTest extends Executor{
 	    }
 	}
 }
+
